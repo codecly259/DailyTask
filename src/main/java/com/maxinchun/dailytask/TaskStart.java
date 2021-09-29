@@ -46,8 +46,7 @@ public class TaskStart {
         String webDav = System.getenv("webDav");
         String account = System.getenv("account");
         String passwd = System.getenv("passwd");
-        String appId = System.getenv("appId");
-        return StringUtils.isAnyBlank(webDav, account, passwd, appId);
+        return StringUtils.isAnyBlank(webDav, account, passwd);
     }
 
     /**
