@@ -32,14 +32,8 @@ jobs:
           restore-keys: ${{ runner.os }}-gradle
       - name: Build with Gradle
         env:
-          BILI_JCT: ${{ secrets.BILI_JCT }}
-          DEDEUSERID: ${{ secrets.DEDEUSERID }}
-          SESSDATA: ${{ secrets.SESSDATA }}
-          SCKEY: ${{ secrets.SCKEY }}
-          DINGTALK: ${{secrets.DINGTALK}}
-          PUSHPLUSTK: ${{secrets.PUSHPLUSTK}}
-          SENDKEY: ${{ secrets.SENDKEY }}
-          TELEGRAM_BOT_TOKEN: ${{secrets.TELEGRAM_BOT_TOKEN}}
-          TELEGRAM_CHAT_ID: ${{secrets.TELEGRAM_CHAT_ID}}
+          webDav: ${{ secrets.webDav }}
+          account: ${{ secrets.account }}
+          passwd: ${{ secrets.passwd }}
         run:
           sh gradlew runMain
