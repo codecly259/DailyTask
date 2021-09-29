@@ -32,8 +32,8 @@ jobs:
           restore-keys: ${{ runner.os }}-gradle
       - name: Build with Gradle
         env:
-          webDav: ${{ secrets.webDav }}
-          account: ${{ secrets.account }}
-          passwd: ${{ secrets.passwd }}
+          webDav: ${{ secrets.WEBDAV }}
+          account: ${{ secrets.ACCOUNT }}
+          passwd: ${{ secrets.PASSWD }}
         run:
           sh gradlew runMain
