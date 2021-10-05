@@ -1,6 +1,7 @@
 package com.maxinchun.dailytask.task;
 
 import com.maxinchun.dailytask.Task;
+import com.maxinchun.dailytask.util.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -8,9 +9,9 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Map;
 
 /**
  * @描述
@@ -46,6 +47,22 @@ public class WebDavTask implements Task {
             log.error("获取 webDav 文件失败", e);
         }
 
+        // 一言: international.v1.hitokoto.cn
+        HttpRequest hitokotoRequest = HttpRequest.newBuilder().uri(URI.create("https://international.v1.hitokoto.cn")).GET().build();
+        try {
+            HttpResponse<String> hitokotoResponse = client.send(hitokotoRequest, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+            if (hitokotoResponse.statusCode() == 200) {
+                String body = hitokotoResponse.body();
+                Map map = JsonUtils.fromJson(body, Map.class);
+                log.info("一言：{}", map.get("hitokoto"));
+            } else {
+                log.error("hitokoto 返回码:{}", hitokotoResponse.statusCode());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
 }
