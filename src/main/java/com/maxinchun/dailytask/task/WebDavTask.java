@@ -22,9 +22,9 @@ import java.util.Map;
 public class WebDavTask implements Task {
     @Override
     public void run() {
-        String webDav = System.getenv("webDav");
-        String account = System.getenv("account");
-        String passwd = System.getenv("passwd");
+        String webDav = System.getenv("WEBDAV");
+        String account = System.getenv("ACCOUNT");
+        String passwd = System.getenv("PASSWD");
 
         // 获取任务配置
         log.debug("开始连接 webDav...");

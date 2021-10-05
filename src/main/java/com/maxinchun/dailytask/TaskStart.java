@@ -43,9 +43,9 @@ public class TaskStart {
      *@修改人和其它信息
      */
     private static boolean checkEnv() {
-        String webDav = System.getenv("webDav");
-        String account = System.getenv("account");
-        String passwd = System.getenv("passwd");
+        String webDav = System.getenv("WEBDAV");
+        String account = System.getenv("ACCOUNT");
+        String passwd = System.getenv("PASSWD");
         return StringUtils.isAnyBlank(webDav, account, passwd);
     }
 
