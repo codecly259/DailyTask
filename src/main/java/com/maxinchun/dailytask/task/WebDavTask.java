@@ -1,8 +1,10 @@
 package com.maxinchun.dailytask.task;
 
 import com.maxinchun.dailytask.Task;
+import com.maxinchun.dailytask.config.TaskConfig;
 import com.maxinchun.dailytask.util.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
 import java.net.URI;
@@ -43,6 +45,10 @@ public class WebDavTask implements Task {
             log.info("dailyConfig: {}", result);
 
             // 开始解析任务配置
+            Yaml yaml = new Yaml();
+            TaskConfig taskConfig = yaml.loadAs(result, TaskConfig.class);
+            System.out.println(JsonUtils.toJson(taskConfig));
+
         } catch (Exception e) {
             log.error("获取 webDav 文件失败", e);
         }
