@@ -68,7 +68,7 @@ public class WebDavTask implements Task {
                     log.debug("开始账单日判断...[{}]", billDay);
                     int dayDiff = DayUtils.dayDiff(billDay);
                     if (dayDiff == 0) {
-                        // todo 需要通知：账单日
+                        // 需要通知：账单日
                         resultBuilder.append("今天是").append(bill.getName()).append("的账单日, 请查询关注还款数据").append("  \n  ");
                     }
                 }
@@ -79,7 +79,7 @@ public class WebDavTask implements Task {
                     log.debug("开始还款日判断...[{}]", dueDay);
                     int dayDiff = DayUtils.dayDiff(dueDay);
                     if (dayDiff < 3) {
-                        // todo 需要通知：还款日
+                        // 需要通知：还款日
                         if (dayDiff == 0) {
                             resultBuilder.append("今天是").append(bill.getName()).append("的还款日, 注意是否已还款").append("  \n  ");
                         } else {
@@ -95,28 +95,27 @@ public class WebDavTask implements Task {
             log.error("获取 webDav 文件失败", e);
         }
 
-        // 一言: international.v1.hitokoto.cn
-        HttpRequest hitokotoRequest = HttpRequest.newBuilder().uri(URI.create("https://international.v1.hitokoto.cn")).GET().build();
-        try {
-            HttpResponse<String> hitokotoResponse = client.send(hitokotoRequest, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
-            if (hitokotoResponse.statusCode() == 200) {
-                String body = hitokotoResponse.body();
-                Map map = JsonUtils.fromJson(body, Map.class);
-                log.info("一言：{}", map.get("hitokoto"));
-                resultBuilder.append(map.get("hitokoto"));
-            } else {
-                log.error("hitokoto 返回码:{}", hitokotoResponse.statusCode());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        log.info(resultBuilder.toString());
-
-
         // 发送结果通知
-        if (StringUtils.isNotBlank(System.getenv("DING_TALK_URL"))) {
+        if (StringUtils.isNotBlank(System.getenv("DING_TALK_URL")) && StringUtils.isNotBlank(resultBuilder.toString())) {
+            // 一言: international.v1.hitokoto.cn
+            HttpRequest hitokotoRequest = HttpRequest.newBuilder().uri(URI.create("https://international.v1.hitokoto.cn")).GET().build();
+            try {
+                HttpResponse<String> hitokotoResponse = client.send(hitokotoRequest, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+                if (hitokotoResponse.statusCode() == 200) {
+                    String body = hitokotoResponse.body();
+                    Map map = JsonUtils.fromJson(body, Map.class);
+                    log.info("一言：{}", map.get("hitokoto"));
+                    resultBuilder.append(map.get("hitokoto"));
+                } else {
+                    log.error("hitokoto 返回码:{}", hitokotoResponse.statusCode());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            log.info(resultBuilder.toString());
+
             SendDingTalk.send(System.getenv("DING_TALK_URL"), resultBuilder.toString());
         }
 
