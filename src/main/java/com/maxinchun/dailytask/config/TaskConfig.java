@@ -17,9 +17,18 @@ public class TaskConfig {
 
     @Data
     public static class Bill {
+        /**
+         * 名称
+         */
         private String name;
-        private int billDate;
-        private int dueDate;
+        /**
+         * 账单日, 从1 开始; < 1 表示没有
+         */
+        private int billDay;
+        /**
+         * 还款日, 从1 开始
+         */
+        private int dueDay;
     }
 
 }

@@ -33,10 +33,9 @@ public class JsonUtils {
     /**
      * 类转换为字符串
      * @param clazz
-     * @param <T>
      * @return
      */
-    public static <T> String toJson(T clazz) {
+    public static String  toJson(Object clazz) {
         try {
             return OBJECT_MAPPER.writeValueAsString(clazz);
         } catch (Exception e) {

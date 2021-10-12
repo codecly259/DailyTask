@@ -35,5 +35,6 @@ jobs:
           WEBDAV: ${{ secrets.WEBDAV }}
           ACCOUNT: ${{ secrets.ACCOUNT }}
           PASSWD: ${{ secrets.PASSWD }}
+          DING_TALK_URL: ${{ secrets.DING_TALK_URL }}
         run:
           sh gradlew runMain

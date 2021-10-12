@@ -20,6 +20,7 @@ public class TaskStart {
 
 
     public static void main(String[] args) {
+        log.debug("时区：[{}]", System.getProperty("user.timezone"));
         if(checkEnv()){
             log.error("💔请在Github Secrets中添加你的Web dav 文件信息");
             return;

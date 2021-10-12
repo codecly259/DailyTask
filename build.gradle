@@ -45,6 +45,8 @@ test {
 task runMain (type: JavaExec) {
     main = 'com.maxinchun.dailytask.TaskStart'
     classpath = sourceSets.main.runtimeClasspath
+    // 设置 jvm 参数： 时区
+    jvmArgs("-Duser.timezone=Asia/Shanghai")
 }
 
 tasks.withType(JavaCompile) {
