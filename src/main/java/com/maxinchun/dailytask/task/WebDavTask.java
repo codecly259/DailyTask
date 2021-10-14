@@ -3,20 +3,13 @@ package com.maxinchun.dailytask.task;
 import com.maxinchun.dailytask.Task;
 import com.maxinchun.dailytask.config.TaskConfig;
 import com.maxinchun.dailytask.util.DayUtils;
+import com.maxinchun.dailytask.util.HttpUtils;
 import com.maxinchun.dailytask.util.JsonUtils;
 import com.maxinchun.dailytask.util.SendDingTalk;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
-import java.util.Base64;
 import java.util.Map;
 
 /**
@@ -35,21 +28,11 @@ public class WebDavTask implements Task {
 
         // 获取任务配置
         log.debug("开始连接 webDav...");
-        // Authorization  使用 Basic 验证:  base64(账号:密码)
-        String auth = "Basic " + Base64.getEncoder().encodeToString((account+":"+passwd).getBytes());
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(webDav))
-                .header("Authorization", auth)
-                .GET()
-                .build();
-        HttpClient client = HttpClient.newBuilder().build();
 
         StringBuilder resultBuilder = new StringBuilder();
 
         try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
-            String result = response.body();
-            log.debug("dailyConfig: {}", result);
+            String result = HttpUtils.getWithAuth(webDav, account, passwd);
 
             // 开始解析任务配置
             Yaml yaml = new Yaml();
@@ -84,7 +67,7 @@ public class WebDavTask implements Task {
                             resultBuilder.append("今天是").append(bill.getName()).append("的还款日, 注意是否已还款").append("  \n  ");
                         } else {
                             resultBuilder.append("离").append(bill.getName()).
-                                    append("的还款日还有"+dayDiff+"天, 请注意按时还款").append("\n");
+                                    append("的还款日还有" + dayDiff + "天, 请注意按时还款").append("\n");
                         }
                     }
                 }
@@ -98,22 +81,11 @@ public class WebDavTask implements Task {
         // 发送结果通知
         if (StringUtils.isNotBlank(System.getenv("DING_TALK_URL")) && StringUtils.isNotBlank(resultBuilder.toString())) {
             // 一言: international.v1.hitokoto.cn
-            HttpRequest hitokotoRequest = HttpRequest.newBuilder().uri(URI.create("https://international.v1.hitokoto.cn")).GET().build();
-            try {
-                HttpResponse<String> hitokotoResponse = client.send(hitokotoRequest, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
-                if (hitokotoResponse.statusCode() == 200) {
-                    String body = hitokotoResponse.body();
-                    Map map = JsonUtils.fromJson(body, Map.class);
-                    log.info("一言：{}", map.get("hitokoto"));
-                    resultBuilder.append(map.get("hitokoto"));
-                } else {
-                    log.error("hitokoto 返回码:{}", hitokotoResponse.statusCode());
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            String body = HttpUtils.get("https://international.v1.hitokoto.cn");
+            Map map = JsonUtils.fromJson(body, Map.class);
+            String hitokoto = map.get("hitokoto").toString();
+            log.info("一言：{}", hitokoto);
+            resultBuilder.append(hitokoto);
             log.info(resultBuilder.toString());
 
             SendDingTalk.send(System.getenv("DING_TALK_URL"), resultBuilder.toString());

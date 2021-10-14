@@ -1,12 +1,8 @@
 package com.maxinchun.dailytask.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 
 /**
@@ -27,21 +23,10 @@ public class SendDingTalk {
         bodyJson.put("markdown", markdownJson);
         String bodyJsonString = JsonUtils.toJson(bodyJson);
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .header("Content-Type", "application/json;charset=utf-8")
-                .POST(HttpRequest.BodyPublishers.ofString(bodyJsonString))
-                .build();
-
-        HttpClient client = HttpClient.newBuilder().build();
-        try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
-            String body = response.body();
-            System.out.println("钉钉通知结果：" + body);
-        } catch (Exception e) {
-            log.error("发送钉钉通知失败", e);
+        String result = HttpUtils.postJson(url, bodyJsonString);
+        if (StringUtils.isBlank(result)) {
+            log.error("发送钉钉失败!!");
         }
-
 
     }
 

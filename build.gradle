@@ -24,6 +24,7 @@ dependencies {
     compile 'ch.qos.logback:logback-classic:latest.release'
     compile 'com.fasterxml.jackson.core:jackson-databind:latest.release'
     compile 'org.yaml:snakeyaml:latest.release'
+    compile 'com.google.guava:guava:latest.release'
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
@@ -42,7 +43,7 @@ test {
     useJUnitPlatform()
 }
 
-task runMain (type: JavaExec) {
+task runMain(type: JavaExec) {
     main = 'com.maxinchun.dailytask.TaskStart'
     classpath = sourceSets.main.runtimeClasspath
     // 设置 jvm 参数： 时区
